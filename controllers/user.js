@@ -17,5 +17,24 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-
+    User.findOne({ email: req.body.email })                         // on cherhce un user qui correspond à l'email de l'user
+        .then(user => {                                             // si la requête réussie
+            if (!user) {                                            // si l'user n'existe pas
+                res.status(401).json({ message: 'identification incorrecte' });
+            } else {                                                // si l'user existe
+                bcrypt.compare(req.body.password, user.password)    // on compare le mdp fourni par le mdp de la database
+                    .then(valid => {                                // error
+                        if (!valid) {                               // si mdp invalide
+                            res.status(401).json({ message: 'identification incorrecte' });
+                        } else {                                    // si mdp correct
+                            res.status(200).json({                  // code OK avec les infos d'authentification utilisés par la database
+                                userId: user._id,
+                                token: 'TOKEN'                      //
+                            });
+                        }
+                    })
+                    .catch(error => res.status(500).json({ error }));
+            }
+        })
+        .catch(error => res.status(500).json({ error }));
 };
