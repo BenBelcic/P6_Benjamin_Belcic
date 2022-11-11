@@ -1,4 +1,5 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt'); // import bcrypt
+const jwt = require('jsonwebtoken'); // import package jsonwebtoken
 
 const User = require('../models/User'); //import du modèle User
 
@@ -29,7 +30,11 @@ exports.login = (req, res, next) => {
                         } else {                                    // si mdp correct
                             res.status(200).json({                  // code OK avec les infos d'authentification utilisés par la database
                                 userId: user._id,
-                                token: 'TOKEN'                      //
+                                token: jwt.sign(                    // fonction sign de jwt qui prends des arguments :
+                                    { userId: user._id },           // objet pour que la req corresponde à l'userId
+                                    'RANDOM_TOKEN_SECRET',          // la clé secrète pour l'encodage
+                                    { expiresIn: '24h' }            // argument de config: le temps d'expiration de validité du token
+                                )                      
                             });
                         }
                     })
