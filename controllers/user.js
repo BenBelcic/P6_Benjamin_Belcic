@@ -1,19 +1,21 @@
+const bcrypt = require('bcrypt');
+
 const User = require('../models/User'); //import du modèle User
 
 exports.signup = (req, res, next) => {
-    const user = new User({        // création d'une nouvelle instance du modèle User
-        ...req.body                  // contenant tous les champs du body de la request
-    });
-    user.save()                     // enregistrement du schéma Thing dans la database
-    .then(() => res.status(201).json({message: 'Objet enregistré !'})) // on renvoie une réponse (pour que la requête n'expire pas) de status 201 (bonne création de ressource)
-    .catch(error => res.status(400).json({ error }));  // on renvoie un code d'error
+    bcrypt.hash(req.body.password, 10) // fonction hash crypte le password du body de la req, salt à 10 exécutions de l'algo hash
+        .then(hash => {                // récup le hash du password
+            const user = new User({    // on enregistre le hash dans un nouveau user avec le model mongoose
+                email: req.body.email,
+                password: hash         // on enregistre le hash du password et pas le password en blanc
+            });
+            user.save()                // on save le user dans la base de donnée
+                .then(() => res.status(201).json({ message: 'Utilisateur créé !' })) // ressource créée
+                .catch(error => res.status(400).json({ error }));
+        })
+        .catch(error => res.status(500).json({ error })); // error de serveur
 };
 
 exports.login = (req, res, next) => {
-    const user = new User({
-        ...req.body
-    });
-    user.save()
-    .then(() => res.status(201).json({message: 'Objet enregistré !'})) 
-    .catch(error => res.status(400).json({ error }));  
+
 };

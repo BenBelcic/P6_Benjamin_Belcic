@@ -32,7 +32,7 @@ app.use(express.json()); //middleware pour que Express prenne en compte toutes l
 // le package bodyparser fait PerformanceObserverEntryList, donne acces au corps de la requete
 
 
-// import de la logique grâce aux routeurx contenu dans sauceRoutes et  userRoutes
+// import de la logique grâce aux routeurs contenu dans sauceRoutes et  userRoutes
 app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
 
