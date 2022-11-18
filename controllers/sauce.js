@@ -27,15 +27,29 @@ exports.getAllSauces = (req, res, next) => {
 // récupération d'une sauce précise en fonction de son id
 exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id}) // on passe un objet de comparaison pour que l'id de l'objet clic soit le même que l'id de URI
-    .then(sauce => res.status(200).json(sauce))  // on récupère l'objet thing, et on le renvoie avec un code 200
+    .then(sauce => res.status(200).json(sauce))  // on récupère l'objet sauce, et on le renvoie avec un code 200
     .catch(error => res.status(404).json({ error })); // 404 car objet non trouvé
 };
 
 // modification d'une sauce
 exports.modifySauce = (req, res, next) => {
-    Sauce.updateOne({ _id: req.params.id}, { ...req.body, _id: req.params.id}) // updateOne pour update l'objet voulu
-    .then(sauce => res.status(200).json(sauce))  // on récupère l'objet thing, et on le renvoie avec un code 200
-    .catch(error => res.status(404).json({ error })); // 404 car objet non trouvé
+    const sauceObject = req.file ? {
+        ...JSON.parse(req.body.sauce),
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    } : { ...req.body };
+
+    delete sauceObject._userId;
+    Sauce.findOne({_id: req.params.id})
+    .then((sauce) => {
+        if (sauce.userId != req.auth.userId) {
+            res.status(401).json({ message: 'non-autorisé' });
+        } else {
+            Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
+            .then(() => res.status(200).json({ message: 'sauce modifiée' }))
+            .catch(error => res.status(401).json({ error }));
+        }
+    })
+    .catch(error => res.status(400).json({ error }));
 };
 
 // suppression d'une sauce
