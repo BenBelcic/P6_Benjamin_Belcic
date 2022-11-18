@@ -1,5 +1,6 @@
 const express = require("express"); // import package Express
 const mongoose = require("mongoose"); // import package mongoose
+const path = require('path');
 
 
 // déclaration des routes
@@ -35,6 +36,9 @@ app.use(express.json()); //middleware pour que Express prenne en compte toutes l
 // import de la logique grâce aux routeurs contenu dans sauceRoutes et  userRoutes
 app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
+
+// gestion de images
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 
 // on export Express pour le rendre disponible partout dans le backend

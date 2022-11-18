@@ -11,7 +11,8 @@ const sauceSchema = mongoose.Schema({
     likes: { type: Number, required: true }, // nombre d'users qui ont like la sauce
     dislikes: { type: Number, required: true }, // nombre d'users qui ont dislike la sauce
     usersLiked: { type: Array, required: true }, // ["String <userId>"] tableau des identifiants des users qui ont like
-    email: { type: Array, required: true }, // ["String <userId>"] tableau des identifiants des users qui ont dislike
+    usersDisliked: { type: Array, required: true }, // ["String <userId>"] tableau des identifiants des users qui ont dislike
+
 });
 
 module.exports = mongoose.model('Sauce', sauceSchema);

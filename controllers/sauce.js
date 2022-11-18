@@ -2,13 +2,20 @@ const Sauce = require('../models/Sauce'); //import du modèle Sauce
 
 // création d'une sauce en fonction du schéma
 exports.createSauce = (req, res, next) => {
-    const sauce = new Sauce({        // création d'une nouvelle instance du modèle Sauce
-        ...req.body                  // contenant tous les champs du body de la request
+    const sauceObject = JSON.parse(req.body.sauce);
+    delete sauceObject._id;
+    delete sauceObject._userId;
+    const sauce = new Sauce({
+        ...sauceObject,
+        userId: req.auth.userId,
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
-    sauce.save()                     // enregistrement du schéma Thing dans la database
-    .then(() => res.status(201).json({message: 'Objet enregistré !'})) // on renvoie une réponse (pour que la requête n'expire pas) de status 201 (bonne création de ressource)
-    .catch(error => res.status(400).json({ error }));  // on renvoie un code d'error
+
+    sauce.save()
+        .then(() => { res.status(201).json({ message: 'Sauce enregistré !' }) })
+        .catch(error => { res.status(400).json({ error }) })
 };
+
 
 // récupération de la liste de toutes les sauces
 exports.getAllSauces = (req, res, next) => {
@@ -33,7 +40,7 @@ exports.modifySauce = (req, res, next) => {
 
 // suppression d'une sauce
 exports.deleteSauce = (req, res, next) => {
-    Sauce.deleteOne({ _id: req.params.id}, { ...req.body, _id: req.params.id}) // deleteOne pour delete l'objet voulu
+    Sauce.deleteOne({ _id: req.params.id}) // deleteOne pour delete l'objet voulu
     .then(() => res.status(200).json({ message: 'objet supprimé !'}))  // on récupère l'objet thing, et on le renvoie avec un code 200
     .catch(error => res.status(400).json({ error })); // 404 car objet non trouvé
 };
