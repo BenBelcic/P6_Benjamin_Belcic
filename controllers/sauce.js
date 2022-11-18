@@ -1,3 +1,4 @@
+const fs = require('fs');
 const Sauce = require('../models/Sauce'); //import du modèle Sauce
 
 // création d'une sauce en fonction du schéma
@@ -54,9 +55,22 @@ exports.modifySauce = (req, res, next) => {
 
 // suppression d'une sauce
 exports.deleteSauce = (req, res, next) => {
-    Sauce.deleteOne({ _id: req.params.id}) // deleteOne pour delete l'objet voulu
-    .then(() => res.status(200).json({ message: 'objet supprimé !'}))  // on récupère l'objet thing, et on le renvoie avec un code 200
-    .catch(error => res.status(400).json({ error })); // 404 car objet non trouvé
+    Sauce.findOne({ _id: req.params.id })
+        .then(sauce => {
+            if (sauce.userId != req.auth.userId) {
+                res.status(403).json({ message: 'Not authorized' });
+            } else {
+                const filename = sauce.imageUrl.split('/images/')[1];
+                fs.unlink(`images/${filename}`, () => {
+                    sauce.deleteOne({ _id: req.params.id })
+                        .then(() => { res.status(200).json({ message: 'Objet supprimé !' }) })
+                        .catch(error => res.status(401).json({ error }));
+                });
+            }
+        })
+        .catch(error => {
+            res.status(500).json({ error });
+        });
 };
 
 
