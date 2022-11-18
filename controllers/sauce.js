@@ -33,16 +33,16 @@ exports.getOneSauce = (req, res, next) => {
 
 // modification d'une sauce
 exports.modifySauce = (req, res, next) => {
-    const sauceObject = req.file ? {
-        ...JSON.parse(req.body.sauce),
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body };
+    const sauceObject = req.file ? {                                                    // check si le fichier existe dans la req
+        ...JSON.parse(req.body.sauce),                                                  // si oui on récup l'objet en parse la string
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`    // et en recréant l'url
+    } : { ...req.body };                                                                // sinon on va juste recupe l'objet du corps de la req
 
-    delete sauceObject._userId;
-    Sauce.findOne({_id: req.params.id})
+    delete sauceObject._userId;                                                         // delete userId pour secure
+    Sauce.findOne({_id: req.params.id})                                                 // recup objet en bdd
     .then((sauce) => {
         if (sauce.userId != req.auth.userId) {
-            res.status(401).json({ message: 'non-autorisé' });
+            res.status(403).json({ message: '403: unauthorized request.' });
         } else {
             Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
             .then(() => res.status(200).json({ message: 'sauce modifiée' }))
