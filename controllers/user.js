@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt'); // import bcrypt
 const jwt = require('jsonwebtoken'); // import package jsonwebtoken
-
 const User = require('../models/User'); //import du modèle User
 
 // inscription
@@ -12,7 +11,7 @@ exports.signup = (req, res, next) => {
                 password: hash               // on enregistre le hash du password et pas le password en blanc
             });
             user.save()                    // on save le user dans la base de donnée
-                .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+                .then(() => res.status(201).json({ message: 'Utilisateur crée !' }))
                 .catch(error => res.status(400).json({ error }));
         })
         .catch(error => res.status(500).json({ error }));

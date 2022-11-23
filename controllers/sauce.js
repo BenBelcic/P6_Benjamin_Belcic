@@ -1,6 +1,13 @@
 const fs = require('fs');
 const Sauce = require('../models/Sauce'); //import du modèle Sauce
 
+// récupération de la liste de toutes les sauces
+exports.getAllSauces = (req, res, next) => {
+    Sauce.find() // on cherche toute la liste des objets dans Thing (pas de param entre () pour affiner la recherche)
+    .then(sauces => res.status(200).json(sauces))  // on récupère le tableau things des objets, et on le renvoie avec un code 200
+    .catch(error => res.status(400).json({ error })); 
+};
+
 // création d'une sauce en fonction du schéma
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
@@ -13,16 +20,8 @@ exports.createSauce = (req, res, next) => {
     });
 
     sauce.save()
-        .then(() => { res.status(201).json({ message: 'Sauce enregistré !' }) })
-        .catch(error => { res.status(400).json({ error }) })
-};
-
-
-// récupération de la liste de toutes les sauces
-exports.getAllSauces = (req, res, next) => {
-    Sauce.find() // on cherche toute la liste des objets dans Thing (pas de param entre () pour affiner la recherche)
-    .then(sauces => res.status(200).json(sauces))  // on récupère le tableau things des objets, et on le renvoie avec un code 200
-    .catch(error => res.status(400).json({ error })); 
+        .then(() =>  res.status(201).json({ message: 'Sauce enregistrée !' }))
+        .catch(error => res.status(400).json({ error }))
 };
 
 // récupération d'une sauce précise en fonction de son id
