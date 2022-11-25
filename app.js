@@ -19,7 +19,6 @@ useUnifiedTopology: true })
 // lancement Express
 const app = express();
 
-// activation helmet
 
 // middleware définissant les headers d'autorisation pour les interactions navigateurs/serveurs pour éviter les erreurs CORS
 app.use((req, res, next) => {
