@@ -73,3 +73,94 @@ exports.deleteSauce = (req, res, next) => {
 };
 
 
+
+// Like/dislike sauce
+exports.rateSauce = (req, res, next) => {
+    let like = req.body.like
+    let userId = req.body.userId
+    let sauceId = req.params.id
+
+    // Like
+    if(like == 1) {
+        Sauce.findOne({ _id: sauceId }) 
+            .then((sauce) => {
+                if(!sauce.usersLiked.includes(userId)) {
+                    Sauce.updateOne(
+                        //On récupère la sauce
+                        { _id: sauceId },
+                        {
+                            // on incrémente les likes de 1
+                            $inc: {likes: 1},
+                            // On met le user dans le tableau des users ayant liké
+                            $push: {usersLiked: userId}
+                        }
+                    )
+                    // Alors message
+                    .then(() => res.status(201).json({ message: 'Vous avez aimé cette sauce!'}))
+                    // Sinon on retourne une erreur 400
+                    .catch((error) => res.status(400).json({ error }));
+                }
+            })
+        .catch((error) => res.status(400).json({ error }));
+    }
+
+    // Dislike
+    if(like === -1) {
+        Sauce.findOne({ _id: sauceId })
+        .then((sauce) => {
+            if(!sauce.usersDisliked.includes(userId)) {
+                Sauce.updateOne(
+                    { _id: sauceId },
+                    {
+                        $inc: {dislikes: 1},
+                        $push: {usersDisliked: userId}
+                    }
+                )
+                .then(() => res.status(201).json({ message: 'Vous n\'avez pas aimé cette sauce!'}))
+                .catch((error) => res.status(400).json({ error }));  
+            }
+        })
+        .catch((error) => res.status(400).json({ error }));
+    }
+
+    // Annulation Like ou Dislike
+    if(like===0) {
+        // On retrouve la sauce
+        Sauce.findOne({ _id: sauceId })
+            .then((sauce) => {
+                // Si le user a déjà liké la sauce
+                if(sauce.usersLiked.includes(userId)) {
+                    Sauce.updateOne(
+                        { _id: sauceId },
+                        {
+                            //On incrémente les likes de -1 
+                            $inc: {likes: -1},
+                            // On retire le user du tableau des users ayant liké
+                            $pull: {usersLiked: userId}
+                        }
+                    )
+                    //Alors message
+                    .then(() => res.status(201).json({ message: 'Votre avez retiré votre Like'}))
+                    // Sinon on retourne une erreur 400
+                    .catch((error) => res.status(400).json({ error }));
+                }
+
+                // Si le user a déjà disliké la sauce
+                if(sauce.usersDisliked.includes(userId)) {
+                    Sauce.updateOne(
+                        { _id: sauceId },
+                        { 
+                            $inc: {dislikes: -1},
+                            $pull: {usersDisliked: userId}
+                        }
+                    )
+                    .then(() => res.status(201).json({ message: 'Votre avez retiré votre Dislike'}))
+                    .catch((error) => res.status(400).json({ error }));
+                }
+            })
+            .catch((error) => res.status(400).json({ error }));
+    }
+};
+
+
+

@@ -1,6 +1,7 @@
 const express = require("express"); // import package Express
 const mongoose = require("mongoose"); // import package mongoose
-const path = require('path');
+const path = require('path'); // import path
+const helmet = require('helmet'); // import helmet
 
 
 // déclaration des routes
@@ -18,6 +19,7 @@ useUnifiedTopology: true })
 // lancement Express
 const app = express();
 
+// activation helmet
 
 // middleware définissant les headers d'autorisation pour les interactions navigateurs/serveurs pour éviter les erreurs CORS
 app.use((req, res, next) => {
@@ -39,6 +41,10 @@ app.use('/api/auth', userRoutes);
 
 // gestion de images
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
+// activation helmet 
+app.use(helmet());
+app.use(helmet.frameguard({ action: 'deny' })); // empêche d'intégrer la page web dans une ifram/fenêtre invisible
 
 
 // on export Express pour le rendre disponible partout dans le backend
