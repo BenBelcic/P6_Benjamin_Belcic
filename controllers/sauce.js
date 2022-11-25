@@ -5,20 +5,18 @@ const Sauce = require('../models/Sauce'); //import du modèle Sauce
 exports.getAllSauces = (req, res, next) => {
     Sauce.find() // on cherche toute la liste des objets dans Thing (pas de param entre () pour affiner la recherche)
     .then(sauces => res.status(200).json(sauces))  // on récupère le tableau things des objets, et on le renvoie avec un code 200
-    .catch(error => res.status(400).json({ error })); 
+    .catch(error => res.status(500).json({ error })); 
 };
 
 // création d'une sauce en fonction du schéma
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
-    delete sauceObject._userId;
     const sauce = new Sauce({
         ...sauceObject,
         userId: req.auth.userId,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
-
     sauce.save()
         .then(() =>  res.status(201).json({ message: 'Sauce enregistrée !' }))
         .catch(error => res.status(400).json({ error }))
@@ -37,8 +35,6 @@ exports.modifySauce = (req, res, next) => {
         ...JSON.parse(req.body.sauce),                                                  // si oui on récup l'objet en parse la string
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`    // et en recréant l'url
     } : { ...req.body };                                                                // sinon on va juste recupe l'objet du corps de la req
-
-    delete sauceObject._userId;                                                         // delete userId pour secure
     Sauce.findOne({_id: req.params.id})                                                 // recup objet en bdd
     .then((sauce) => {
         if (sauce.userId != req.auth.userId) {
