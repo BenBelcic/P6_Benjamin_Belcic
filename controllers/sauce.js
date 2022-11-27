@@ -89,7 +89,7 @@ exports.rateSauce = (req, res, next) => {
         Sauce.findOne({ _id: req.params.id }) 
             .then((sauce) => {
                 // si le tableau des users ayant liké ne contient pas l'userId
-                if(!sauce.usersLiked.includes(req.body.userId)) {
+                if(!sauce.usersLiked.includes(req.body.userId) && !sauce.usersDisliked.includes(req.body.userId)) {
                     // on va update 
                     Sauce.updateOne(
                         // cette sauce
@@ -135,7 +135,7 @@ exports.rateSauce = (req, res, next) => {
         if(req.body.like === -1) {
             Sauce.findOne({ _id: req.params.id })
             .then((sauce) => {
-                if(!sauce.usersDisliked.includes(req.body.userId)) {
+                if(!sauce.usersDisliked.includes(req.body.userId) && !sauce.usersliked.includes(req.body.userId)) {
                     Sauce.updateOne(
                         { _id: req.params.id },
                         { $push: { usersLiked: req.body.userId }, $inc: { dislikes: +1 } }
