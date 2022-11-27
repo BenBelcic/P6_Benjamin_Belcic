@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt'); // import bcrypt
 const jwt = require('jsonwebtoken'); // import package jsonwebtoken
 const User = require('../models/User'); //import du modèle User
+require('dotenv').config();
 
 // inscription
 exports.signup = (req, res, next) => {
@@ -32,7 +33,7 @@ exports.login = (req, res, next) => {
                         userId: user._id,
                         token: jwt.sign(                        // fonction sign de jwt qui prends des arguments :
                             { userId: user._id },               // objet pour que la req corresponde à l'userId
-                            'RANDOM_TOKEN_SECRET',              // la clé secrète pour l'encodage
+                            process.env.SECRET_TOKEN,              // la clé secrète pour l'encodage
                             { expiresIn: '24h' }
                         )
                     });

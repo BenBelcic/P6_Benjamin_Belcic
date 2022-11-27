@@ -2,6 +2,7 @@ const express = require("express"); // import package Express
 const mongoose = require("mongoose"); // import package mongoose
 const path = require('path'); // import path
 const helmet = require('helmet'); // import helmet
+require('dotenv').config(); 
 
 
 // déclaration des routes
@@ -9,7 +10,7 @@ const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
 
-mongoose.connect("mongodb+srv://BenjaminBelcic:Projet6@cluster1.nst9obl.mongodb.net/?retryWrites=true&w=majority",
+mongoose.connect(process.env.SECRET_DB,
 {useNewUrlParser: true,
 useUnifiedTopology: true })
 .then(() => console.log('connexion à MongoDB réussie !'))
