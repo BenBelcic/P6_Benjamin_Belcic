@@ -2,6 +2,10 @@ const express = require("express"); // import package Express
 const mongoose = require("mongoose"); // import package mongoose
 const path = require('path'); // import path
 const helmet = require('helmet'); // import helmet
+const xss = require('xss'); // import xss package
+const html = xss('<script>alert("xss");</script>');
+console.log(html);
+
 require('dotenv').config(); 
 
 

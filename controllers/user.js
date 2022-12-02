@@ -1,14 +1,18 @@
-const bcrypt = require('bcrypt'); // import bcrypt
+const bcrypt = require('bcrypt'); // import package bcrypt hach password
 const jwt = require('jsonwebtoken'); // import package jsonwebtoken
+const cryptojs = require('crypto-js'); // import package crypto-js pour chiffré mail
 const User = require('../models/User'); //import du modèle User
 require('dotenv').config();
 
+
+
 // inscription
 exports.signup = (req, res, next) => {
+    const hashedEmail = cryptojs.HmacSHA512(req.body.email, process.env.SECRET_CRYPTOJS_TOKEN).toString(cryptojs.enc.Base64);
     bcrypt.hash(req.body.password, 10) // fonction hash crypte le password du body de la req, salt à 10 exécutions de l'algo hash
         .then(hash => {                  // récup le hash du password
             const user = new User({        // on enregistre le hash dans un nouveau user avec le model mongoose
-                email: req.body.email,
+                email: hashedEmail,
                 password: hash               // on enregistre le hash du password et pas le password en blanc
             });
             user.save()                    // on save le user dans la base de donnée
@@ -19,7 +23,8 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-    User.findOne({ email: req.body.email })                     // on cherhce un user qui correspond à l'email de l'user
+    const hashedEmail = cryptojs.HmacSHA512(req.body.email, process.env.SECRET_CRYPTOJS_TOKEN).toString(cryptojs.enc.Base64);
+    User.findOne({ email: hashedEmail })                     // on cherhce un user qui correspond à l'email de l'user
         .then(user => {                                         // si la requête réussie
             if (!user) {                                        // si l'user n'existe pas
                 return res.status(401).json({ error: 'Utilisateur non trouvé !' });
