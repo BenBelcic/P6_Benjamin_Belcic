@@ -1,4 +1,4 @@
-const passwordValidator = require('password-validator');
+const passwordValidator = require('password-validator'); //import package password-validator pour valider les passwords
 
 const passwordSchema = new passwordValidator();
 
@@ -10,4 +10,4 @@ passwordSchema
 .has().digits()                         //contient une un chiffre au moins       
 .has().not().spaces()                   //pas d'espace 
 
-module.exports = passwordSchema;
+module.exports = passwordSchema; //export du modèle

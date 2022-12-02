@@ -1,12 +1,14 @@
 const express = require("express"); // import package Express
 const mongoose = require("mongoose"); // import package mongoose
-const path = require('path'); // import path
-const helmet = require('helmet'); // import helmet
-const xss = require('xss'); // import xss package
+const path = require('path'); // import path 
+const helmet = require('helmet'); // import helmet secure les headers
+const rateLimit = require("express-rate-limit"); // import package express-rate-limit, anti force brut
+
+const xss = require('xss'); // import xss package anti xss de base
 const html = xss('<script>alert("xss");</script>');
 console.log(html);
 
-require('dotenv').config(); 
+require('dotenv').config();
 
 
 // déclaration des routes
@@ -15,10 +17,12 @@ const userRoutes = require('./routes/user');
 
 
 mongoose.connect(process.env.SECRET_DB,
-{useNewUrlParser: true,
-useUnifiedTopology: true })
-.then(() => console.log('connexion à MongoDB réussie !'))
-.catch(() => console.log('connexion à MongoDB échouée !'));
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
+    .then(() => console.log('connexion à MongoDB réussie !'))
+    .catch(() => console.log('connexion à MongoDB échouée !'));
 
 
 // lancement Express
@@ -49,6 +53,14 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 // activation helmet 
 app.use(helmet());
 app.use(helmet.frameguard({ action: 'deny' })); // empêche d'intégrer la page web dans une ifram/fenêtre invisible
+
+// activation et config express-rate-limit
+const limiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // pour 10 minutes
+    max: 100 // le client pourra donc faire 100 requêtes max toutes les 10 minutes
+});
+
+app.use(limiter);
 
 
 // on export Express pour le rendre disponible partout dans le backend

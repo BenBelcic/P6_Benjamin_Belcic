@@ -8,7 +8,7 @@ require('dotenv').config();
 
 // inscription
 exports.signup = (req, res, next) => {
-    const hashedEmail = cryptojs.HmacSHA512(req.body.email, process.env.SECRET_CRYPTOJS_TOKEN).toString(cryptojs.enc.Base64);
+    const hashedEmail = cryptojs.HmacSHA512(req.body.email, process.env.SECRET_CRYPTOJS_TOKEN).toString();
     bcrypt.hash(req.body.password, 10) // fonction hash crypte le password du body de la req, salt à 10 exécutions de l'algo hash
         .then(hash => {                  // récup le hash du password
             const user = new User({        // on enregistre le hash dans un nouveau user avec le model mongoose
@@ -23,7 +23,7 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-    const hashedEmail = cryptojs.HmacSHA512(req.body.email, process.env.SECRET_CRYPTOJS_TOKEN).toString(cryptojs.enc.Base64);
+    const hashedEmail = cryptojs.HmacSHA512(req.body.email, process.env.SECRET_CRYPTOJS_TOKEN).toString();
     User.findOne({ email: hashedEmail })                     // on cherhce un user qui correspond à l'email de l'user
         .then(user => {                                         // si la requête réussie
             if (!user) {                                        // si l'user n'existe pas
