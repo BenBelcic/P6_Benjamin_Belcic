@@ -69,23 +69,12 @@ exports.deleteSauce = (req, res, next) => {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
 // Like et dislike une sauce
 exports.rateSauce = (req, res, next) => {
     let like = req.body.like
     let userId = req.body.userId
     let sauceId = req.params.id
-
+    console.log(req.body);
     // Like
     if(like === 1) {
         Sauce.findOne({ _id: sauceId }) 
@@ -137,10 +126,10 @@ exports.rateSauce = (req, res, next) => {
         if(like === -1) {
             Sauce.findOne({ _id: sauceId })
             .then((sauce) => {
-                if(!sauce.usersDisliked.includes(userId) && !sauce.usersliked.includes(userId)) {
+                if(!sauce.usersDisliked.includes(userId) && !sauce.usersLiked.includes(userId)) {
                     Sauce.updateOne(
                         { _id: sauceId },
-                        { $push: { usersLiked: userId }, $inc: { dislikes: +1 } }
+                        { $push: { usersLiked: userId }, $inc: { dislikes: 1 } }
                       )
                     .then(() => res.status(201).json({ message: 'Vous avez disliké cette sauce !'}))
                     .catch((error) => res.status(400).json({ error }));  
