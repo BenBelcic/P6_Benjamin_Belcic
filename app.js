@@ -4,9 +4,6 @@ const path = require('path'); // import path
 const helmet = require('helmet'); // import helmet secure les headers
 const rateLimit = require("express-rate-limit"); // import package express-rate-limit, anti force brut
 
-const xss = require('xss'); // import xss package anti xss de base
-const html = xss('<script>alert("xss");</script>');
-console.log(html);
 
 require('dotenv').config();
 
@@ -52,7 +49,6 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // activation helmet 
 app.use(helmet());
-app.use(helmet.frameguard({ action: 'deny' })); // empêche d'intégrer la page web dans une ifram/fenêtre invisible
 
 // activation et config express-rate-limit
 const limiter = rateLimit({

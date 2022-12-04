@@ -17,16 +17,26 @@ Ensuite cloner ce repository pour le backend
 
 **renommer le fichier** `.env.dist` en `.env` et y **ajouter vos informations confidentielles** aux **variables existantes**
 
-Démarrer le serveur sur le dossier backend :
 
-`cd backend` 
-
-`nodemon server`
-
-Démarrer le frontend :
-
-`cd frontend`
-
-`npm start`
+Démarrer le serveur sur le dossier backend
+```bash
+cd backend
+```
+```bash
+npm install
+```
+```bash
+nodemon server
+```
+Démarrer le frontend
+```bash
+cd frontend
+```
+```bash
+npm install
+```
+```bash
+npm start
+```
 
 **Bonne visite !**
