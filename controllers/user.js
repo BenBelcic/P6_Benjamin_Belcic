@@ -8,14 +8,14 @@ require('dotenv').config();
 
 // inscription
 exports.signup = (req, res, next) => {
-    const hashedEmail = cryptojs.HmacSHA512(req.body.email, process.env.SECRET_CRYPTOJS_TOKEN).toString();
-    bcrypt.hash(req.body.password, 10) // fonction hash crypte le password du body de la req, salt à 10 exécutions de l'algo hash
+    const hashedEmail = cryptojs.HmacSHA512(req.body.email, process.env.SECRET_CRYPTOJS_TOKEN).toString(); //chiffre l'email
+    bcrypt.hash(req.body.password, 10)   // fonction hash crypte le password du body de la req, salt à 10 exécutions de l'algo hash
         .then(hash => {                  // récup le hash du password
-            const user = new User({        // on enregistre le hash dans un nouveau user avec le model mongoose
-                email: hashedEmail,
-                password: hash               // on enregistre le hash du password et pas le password en blanc
+            const user = new User({      // on enregistre les données chiffrées dans un nouveau user avec le model mongoose
+                email: hashedEmail,      // on enregistre l'email chiffré
+                password: hash           // on enregistre le hash du password et pas le password en blanc
             });
-            user.save()                    // on save le user dans la base de donnée
+            user.save()                  // on save le user dans la base de donnée
                 .then(() => res.status(201).json({ message: 'Utilisateur crée !' }))
                 .catch(error => res.status(400).json({ error }));
         })
@@ -24,7 +24,7 @@ exports.signup = (req, res, next) => {
 
 exports.login = (req, res, next) => {
     const hashedEmail = cryptojs.HmacSHA512(req.body.email, process.env.SECRET_CRYPTOJS_TOKEN).toString();
-    User.findOne({ email: hashedEmail })                     // on cherhce un user qui correspond à l'email de l'user
+    User.findOne({ email: hashedEmail })                        // on cherhce un user qui correspond à l'email de l'user
         .then(user => {                                         // si la requête réussie
             if (!user) {                                        // si l'user n'existe pas
                 return res.status(401).json({ error: 'Utilisateur non trouvé !' });
@@ -38,7 +38,7 @@ exports.login = (req, res, next) => {
                         userId: user._id,
                         token: jwt.sign(                        // fonction sign de jwt qui prends des arguments :
                             { userId: user._id },               // objet pour que la req corresponde à l'userId
-                            process.env.SECRET_TOKEN,              // la clé secrète pour l'encodage
+                            process.env.SECRET_TOKEN,           // la clé secrète pour l'encodage
                             { expiresIn: '24h' }
                         )
                     });

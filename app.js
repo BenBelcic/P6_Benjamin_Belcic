@@ -37,10 +37,10 @@ app.use((req, res, next) => {
 
 
 app.use(express.json()); //middleware pour que Express prenne en compte toutes les requêtes écrites en JSON et rend exploitable leur body dans l'objet req (la request). Pour pouvoir écrire le POST
-// le package bodyparser fait PerformanceObserverEntryList, donne acces au corps de la requete
+// remplace bodyparser donne acces au corps de la requete
 
 
-// import de la logique grâce aux routeurs contenu dans sauceRoutes et  userRoutes
+// import de la logique grâce aux routeurs contenu dans sauceRoutes et userRoutes
 app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
 
