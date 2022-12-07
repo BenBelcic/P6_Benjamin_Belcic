@@ -1,10 +1,8 @@
-const bcrypt = require('bcrypt'); // import package bcrypt hach password
-const jwt = require('jsonwebtoken'); // import package jsonwebtoken
-const cryptojs = require('crypto-js'); // import package crypto-js pour chiffré mail
+const bcrypt = require('bcrypt');       // import package bcrypt hach password
+const jwt = require('jsonwebtoken');    // import package jsonwebtoken
+const cryptojs = require('crypto-js');  // import package crypto-js pour chiffré mail
 const User = require('../models/User'); //import du modèle User
 require('dotenv').config();
-
-
 
 // inscription
 exports.signup = (req, res, next) => {

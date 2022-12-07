@@ -1,17 +1,14 @@
-const express = require("express"); // import package Express
-const mongoose = require("mongoose"); // import package mongoose
-const path = require('path'); // import path 
-const helmet = require('helmet'); // import helmet secure les headers
-const rateLimit = require("express-rate-limit"); // import package express-rate-limit, anti force brut
-
+const express = require("express");                // import package Express
+const mongoose = require("mongoose");              // import package mongoose
+const path = require('path');                      // import path 
+const helmet = require('helmet');                  // import helmet secure les headers
+const rateLimit = require("express-rate-limit");   // import package express-rate-limit, anti force brut
 
 require('dotenv').config();
-
 
 // déclaration des routes
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
-
 
 mongoose.connect(process.env.SECRET_DB,
     {
@@ -25,7 +22,6 @@ mongoose.connect(process.env.SECRET_DB,
 // lancement Express
 const app = express();
 
-
 // middleware définissant les headers d'autorisation pour les interactions navigateurs/serveurs pour éviter les erreurs CORS
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', process.env.AUTHORIZED_ORIGIN);
@@ -34,7 +30,6 @@ app.use((req, res, next) => {
     // res.json({ message: 'Votre requête a bien été reçue !' });
     next();
 });
-
 
 app.use(express.json()); //middleware pour que Express prenne en compte toutes les requêtes écrites en JSON et rend exploitable leur body dans l'objet req (la request). Pour pouvoir écrire le POST
 // remplace bodyparser donne acces au corps de la requete

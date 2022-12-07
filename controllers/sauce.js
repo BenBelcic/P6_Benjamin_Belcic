@@ -31,16 +31,16 @@ exports.getOneSauce = (req, res, next) => {
 
 // modification d'une sauce
 exports.modifySauce = (req, res, next) => {
-    const sauceObject = req.file ? {                                                    // check si le fichier existe dans la req
-        ...JSON.parse(req.body.sauce),                                                  // si oui on récup l'objet en parse la string
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`    // et en recréant l'url
-    } : { ...req.body };                                                                // sinon on va juste recupe l'objet du corps de la req
-    Sauce.findOne({_id: req.params.id})                                                 // recup objet en bdd
+    const sauceObject = req.file ? {                                                       // check si un fichier (image) existe dans la requête
+        ...JSON.parse(req.body.sauce),                                                     // si oui, on récup l'objet JSON et on le parse 
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`       // et en recréant l'url de l'image
+    } : { ...req.body };                                                                   // sinon on va juste recupe l'objet du corps de la req
+    Sauce.findOne({_id: req.params.id})                                                    // recup objet en bdd
     .then((sauce) => {
-        if (sauce.userId != req.auth.userId) {
-            res.status(403).json({ message: '403: unauthorized request.' });
+        if (sauce.userId != req.auth.userId) {                                             // si l'authentification du user n'est pas validée
+            res.status(403).json({ message: '403: unauthorized request.' });               // message d'erreur
         } else {
-            Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
+            Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})  // si c'est ok, on remplace l'objet par le nouvel objet
             .then(() => res.status(200).json({ message: 'sauce modifiée' }))
             .catch(error => res.status(401).json({ error }));
         }
@@ -48,7 +48,7 @@ exports.modifySauce = (req, res, next) => {
     .catch(error => res.status(400).json({ error }));
 };
 
-// suppression d'une sauce
+// suppression d'une sauceO
 exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then(sauce => {
